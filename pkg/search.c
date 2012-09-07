@@ -237,6 +237,7 @@ exec_search(int argc, char **argv)
 	unsigned int opt = 0;
 	match_t match = MATCH_REGEX;
 	pkgdb_field search = FIELD_NONE;
+	pkgdb_field sort = FIELD_NONE;
 	pkgdb_field label = FIELD_NONE;
 	struct pkgdb *db = NULL;
 	struct pkgdb_it *it = NULL;
@@ -317,7 +318,9 @@ exec_search(int argc, char **argv)
 			search = FIELD_ORIGIN;
 		else
 			search = FIELD_NAMEVER; /* Default search */
-	}
+		sort = FIELD_NAMEVER;
+	} else 
+		sort = search;
 	if (label == FIELD_NONE)
 		label = search; /* By default, show what was searched  */
 
@@ -344,7 +347,7 @@ exec_search(int argc, char **argv)
 	if (pkgdb_open(&db, PKGDB_REMOTE) != EPKG_OK)
 		return (EX_IOERR);
 
-	if ((it = pkgdb_search(db, pattern, match, search, search,
+	if ((it = pkgdb_search(db, pattern, match, search, sort,
 	    reponame)) == NULL) {
 		pkgdb_close(db);
 		return (EX_IOERR);
